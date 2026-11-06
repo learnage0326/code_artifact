@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺北市代間學習基地 - 樂齡韌力模組教學互動平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        },
+                        amberCustom: '#f59e0b',
+                        skyCustom: '#0284c7'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .active-tab {
+            border-bottom: 3px solid #16a34a;
+            color: #16a34a;
+            font-weight: 700;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- 頂部導覽列 Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-600 to-emerald-400 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid font-bold text-xl fa-seedling"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-800 leading-tight">臺北市代間學習基地</h1>
+                    <p class="text-xs text-slate-500">樂齡韌力模組與代間共學培力平台</p>
+                </div>
+            </div>
+
+            <!-- 導覽頁籤 -->
+            <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                <button onclick="switchTab('resilience')" id="nav-resilience" class="py-5 px-1 active-tab hover:text-green-600 transition">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> 韌力三力互動
+                </button>
+                <button onclick="switchTab('safety')" id="nav-safety" class="py-5 px-1 text-slate-600 hover:text-green-600 transition">
+                    <i class="fa-solid fa-traffic-light mr-1"></i> AI紅黃綠燈
+                </button>
+                <button onclick="switchTab('prompt')" id="nav-prompt" class="py-5 px-1 text-slate-600 hover:text-green-600 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 5格Prompt生成
+                </button>
+                <button onclick="switchTab('taxi')" id="nav-taxi" class="py-5 px-1 text-slate-600 hover:text-green-600 transition">
+                    <i class="fa-solid fa-taxi mr-1"></i> 安心叫車核對
+                </button>
+                <button onclick="switchTab('editor')" id="nav-editor" class="py-5 px-1 text-slate-600 hover:text-green-600 transition">
+                    <i class="fa-solid fa-file-pen mr-1"></i> 50分教案產生器
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-2 h-2 mr-1.5 bg-green-500 rounded-full animate-pulse"></span> 種子師資版
+                </span>
+            </div>
+        </div>
+
+        <!-- 流動選單 (手機版) -->
+        <div class="md:hidden flex overflow-x-auto border-t border-slate-100 px-2 py-2 space-x-2 text-xs font-medium no-scrollbar">
+            <button onclick="switchTab('resilience')" class="px-3 py-1.5 rounded-lg bg-green-50 text-green-700 whitespace-nowrap">韌力三力</button>
+            <button onclick="switchTab('safety')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">紅黃綠燈</button>
+            <button onclick="switchTab('prompt')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">5格Prompt</button>
+            <button onclick="switchTab('taxi')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">叫車模擬</button>
+            <button onclick="switchTab('editor')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">教案產生器</button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: 樂齡韌力三力互動架構 -->
+        <section id="tab-resilience" class="space-y-6">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3">樂齡韌力模組：三力合一 × 代間共學</h2>
+                    <p class="text-emerald-100 text-sm sm:text-base leading-relaxed">
+                        當長壽、數位化與世代差異同時發生，教學重點從「補救不足」轉向「自主決定、安全參與與世代共學」。
+                        以同一個生活任務為中心，發展三項關鍵能力。
+                    </p>
+                </div>
+                <i class="fa-solid fa-people-hold text-9xl absolute -right-4 -bottom-6 opacity-10"></i>
+            </div>
+
+            <!-- 三力互動選擇卡 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 心理韌力 -->
+                <div onclick="showResilienceDetail('psych')" id="card-psych" class="cursor-pointer bg-white rounded-2xl p-6 border-2 border-amber-500 shadow-md hover:shadow-lg transition group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">SEL 心理輔導</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">心理韌力 (SEL)</h3>
+                    <p class="text-slate-600 text-sm mb-4">覺察情緒、重塑自我效能、面對失誤能調適「先緩緩」。</p>
+                    <div class="flex items-center justify-between text-xs text-amber-700 font-semibold pt-2 border-t border-slate-100">
+                        <span><i class="fa-solid fa-circle-play mr-1"></i> 檢視對應圖卡</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- 數位韌力 -->
+                <div onclick="showResilienceDetail('digital')" id="card-digital" class="cursor-pointer bg-white rounded-2xl p-6 border-2 border-slate-200 hover:border-blue-500 shadow-sm hover:shadow-md transition group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">AI/資訊判讀</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">數位韌力 (AI/資訊)</h3>
+                    <p class="text-slate-600 text-sm mb-4">人機協作、辨識幻覺、個資最少揭露、雙來源查證。</p>
+                    <div class="flex items-center justify-between text-xs text-blue-700 font-semibold pt-2 border-t border-slate-100">
+                        <span><i class="fa-solid fa-circle-play mr-1"></i> 檢視對應圖卡</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- 社會韌力 -->
+                <div onclick="showResilienceDetail('social')" id="card-social" class="cursor-pointer bg-white rounded-2xl p-6 border-2 border-slate-200 hover:border-emerald-500 shadow-sm hover:shadow-md transition group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">代間青銀互惠</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">社會韌力 (代間)</h3>
+                    <p class="text-slate-600 text-sm mb-4">代間互惠、雙向鷹架、尋求支持與社區參與。</p>
+                    <div class="flex items-center justify-between text-xs text-emerald-700 font-semibold pt-2 border-t border-slate-100">
+                        <span><i class="fa-solid fa-circle-play mr-1"></i> 檢視對應圖卡</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 動態情境演練展示區 -->
+            <div id="resilience-detail-box" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm transition-all duration-300">
+                <!-- 預設動態載入內容 -->
+            </div>
+        </section>
+
+        <!-- TAB 2: AI人機協作紅黃綠燈 -->
+        <section id="tab-safety" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-1">人機協作紅黃綠燈：風險評估模擬器</h2>
+                        <p class="text-slate-600 text-sm">請進行情境挑戰，判斷任務風險並選擇最適宜的應對燈號方案！</p>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                        <span class="text-xs font-bold text-slate-600">目前挑戰得分：</span>
+                        <span id="quiz-score" class="text-lg font-black text-emerald-600">0 / 600</span>
+                    </div>
+                </div>
+
+                <!-- 燈號簡介 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                        <div class="flex items-center space-x-2 text-green-700 font-bold mb-2">
+                            <span class="w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse"></span>
+                            <span>綠燈｜可直接輔助</span>
+                        </div>
+                        <p class="text-xs text-green-900 leading-relaxed">低風險、易修改：節慶賀卡祝福語、聚會備選菜單、文案寫作修稿。</p>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <div class="flex items-center space-x-2 text-amber-700 font-bold mb-2">
+                            <span class="w-3.5 h-3.5 bg-amber-500 rounded-full animate-pulse"></span>
+                            <span>黃燈｜需雙來源查證</span>
+                        </div>
+                        <p class="text-xs text-amber-900 leading-relaxed">涉及事實與時效：健康資訊、公車時刻、敬老卡補助條件。</p>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div class="flex items-center space-x-2 text-red-700 font-bold mb-2">
+                            <span class="w-3.5 h-3.5 bg-red-500 rounded-full animate-pulse"></span>
+                            <span>紅燈｜禁止交付AI</span>
+                        </div>
+                        <p class="text-xs text-red-900 leading-relaxed">高風險、不可逆：疾病診斷與停藥決策、匯款投資、契約簽署。</p>
+                    </div>
+                </div>
+
+                <!-- 互動測驗題目 -->
+                <div class="border-t border-slate-200 pt-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-gamepad text-green-600 mr-2"></i>情境模擬互動挑戰 (共 6 題)</h3>
+                        <button onclick="resetQuiz()" class="text-xs font-semibold text-slate-500 hover:text-green-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> 重置模擬挑戰
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-container" class="space-y-6">
+                        <!-- JS 渲染測驗 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 5格 Prompt 提問單產生器 -->
+        <section id="tab-prompt" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左側輸入 -->
+                <div class="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-2xl font-bold text-slate-800">高齡友善 5格 Prompt 提問單</h2>
+                    <p class="text-slate-600 text-sm">引導樂齡學員清楚說明需求，避免隱私洩漏（支援語音輸入思維）。</p>
+                    
+                    <div class="space-y-3 pt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">1. Goal (目標)</label>
+                            <input type="text" id="p-goal" placeholder="例：幫我設計週日全家帶孫子一日遊的景點" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">2. Context (背景)</label>
+                            <input type="text" id="p-context" placeholder="例：包含兩位70歲長者與一位6歲小孩，位於臺北市" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">3. Constraint (限制)</label>
+                            <input type="text" id="p-constraint" placeholder="例：走路少於15分鐘、有電梯、午餐需有軟食選項" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">4. Output (格式)</label>
+                            <input type="text" id="p-output" placeholder="例：請用大字體白話文，列出時間與行程表格" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">5. Safety (個資與安全防禦)</label>
+                            <input type="text" id="p-safety" value="去除任何住址密碼，不公開真實姓名與身分證字號" class="w-full text-sm p-3 border border-slate-300 rounded-xl bg-slate-50 text-slate-600 focus:outline-none" readonly>
+                        </div>
+                    </div>
+
+                    <button onclick="generatePrompt()" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>組合高齡友善提問指令</span>
+                    </button>
+                </div>
+
+                <!-- 右側輸出 preview -->
+                <div class="lg:col-span-5 bg-slate-900 rounded-2xl p-6 sm:p-8 text-slate-100 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Generated Prompt Result</span>
+                            <button onclick="copyPrompt()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                                <i class="fa-solid fa-copy mr-1"></i> 複製指令
+                            </button>
+                        </div>
+                        <div id="prompt-output-box" class="font-mono text-sm leading-relaxed text-emerald-300 whitespace-pre-wrap bg-slate-950/50 p-4 rounded-xl border border-slate-800 min-h-[220px]">
+請填寫左側內容後點擊生成按鈕...
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400">
+                        <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i> 提示：高齡學員可透過手機「語音輸入」功能，分段唸出上述5格內容。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: 安心叫車模擬與核對卡 -->
+        <section id="tab-taxi" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm max-w-4xl mx-auto">
+                <div class="text-center max-w-xl mx-auto mb-8">
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">實作二：安心出門不求人</span>
+                    <h2 class="text-2xl font-bold text-slate-800 mt-2">計程車與外送安心模擬核對</h2>
+                    <p class="text-slate-500 text-sm mt-1">安心練習，絕不真的叫車或花錢，體驗青銀鷹架與「先緩緩」機制。</p>
+                </div>
+
+                <!-- 步驟演練容器 -->
+                <div id="taxi-step-container" class="space-y-6">
+                    <!-- 步驟 1: 地標選擇 -->
+                    <div class="border-2 border-green-500 rounded-2xl p-6 bg-green-50/40">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-slate-800 text-sm">STEP 1｜公共定位與隱私保護</span>
+                            <span class="text-xs font-semibold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">青銀雙向鷹架</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-4">練習使用「公共地標」（如捷運站、公園），保護個人真實完整住址。</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <button onclick="selectTaxiDestination('臺北車站 (捷運M8出口)')" class="p-3 bg-white border border-slate-200 rounded-xl text-left hover:border-green-500 hover:shadow-sm text-sm font-medium text-slate-700">
+                                📍 臺北車站 M8
+                            </button>
+                            <button onclick="selectTaxiDestination('成德國民小學 (代間基地)')" class="p-3 bg-white border border-slate-200 rounded-xl text-left hover:border-green-500 hover:shadow-sm text-sm font-medium text-slate-700">
+                                📍 成德國小基地
+                            </button>
+                            <button onclick="selectTaxiDestination('臺北市立聯合醫院')" class="p-3 bg-white border border-slate-200 rounded-xl text-left hover:border-green-500 hover:shadow-sm text-sm font-medium text-slate-700">
+                                📍 聯合醫院
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 步驟 2: 折抵與卡片 -->
+                    <div class="border border-slate-200 rounded-2xl p-6 opacity-60" id="taxi-step-2">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-slate-800 text-sm">STEP 2｜敬老卡優惠與付款設定</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-3">核對敬老愛心卡折抵標籤，此處僅模擬界面辨識，不上傳卡號。</p>
+                        <div class="flex items-center space-x-3 bg-slate-100 p-3 rounded-xl text-sm">
+                            <i class="fa-solid fa-id-card text-emerald-600 text-xl"></i>
+                            <span class="text-slate-700 font-medium">已選取：台北市敬老點數折抵機制 (模擬狀態)</span>
+                        </div>
+                    </div>
+
+                    <!-- 步驟 3: 核對與暫停機制 -->
+                    <div class="border border-slate-200 rounded-2xl p-6 opacity-60" id="taxi-step-3">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-slate-800 text-sm">STEP 3｜「先緩緩」核對與手停機制</span>
+                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">停止點考驗</span>
+                        </div>
+                        <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-4 mb-4">
+                            <p class="text-xs text-amber-900 leading-relaxed font-medium">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i>
+                                核心準則：手停在正式「送出叫車」按鈕前！由樂齡學員親自核對路線與估算金額，青年學伴僅進行協助。
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 text-white p-4 rounded-xl">
+                            <div>
+                                <div class="text-xs text-slate-400">擬定目的地：<span id="summary-dest" class="text-emerald-400 font-bold">未選擇</span></div>
+                                <div class="text-xs text-slate-400">估算費用：<span class="text-white font-bold">NT$ 180 (敬老點數扣抵)</span></div>
+                            </div>
+                            <button onclick="triggerPauseMechanism()" class="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl transition">
+                                🛑 觸發「先緩緩」4步驟
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模擬結果彈窗/區域 -->
+                <div id="pause-modal" class="hidden mt-6 bg-emerald-900 text-white p-6 rounded-2xl shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>安心叫車核對完畢！「先緩緩」四步驟體驗完成</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                        <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-700">1. 停手 (按鍵前停頓)</div>
+                        <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-700">2. 辨識焦慮 (覺察緊張)</div>
+                        <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-700">3. 放慢呼吸 (調適情緒)</div>
+                        <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-700">4. 求助核對 (青銀確認)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: 50分鐘教案產生器 -->
+        <section id="tab-editor" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">樂齡韌力模組 - 50分鐘教案產生器</h2>
+                        <p class="text-slate-500 text-sm">依照四欄對齊原則（學習目標、教學流程、評量證據、教材支持）產出標準教案。</p>
+                    </div>
+                    <button onclick="exportLessonPlan()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>導出一頁式完整教案</span>
+                    </button>
+                </div>
+
+                <!-- 教案範本選擇 -->
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-slate-700 mb-2">快速載入10大樂齡主題範本：</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+                        <button onclick="loadTemplate(1)" class="p-2 border rounded-lg hover:bg-slate-50 text-slate-700 text-left font-medium">1. 家庭回憶錄</button>
+                        <button onclick="loadTemplate(2)" class="p-2 border rounded-lg hover:bg-slate-50 text-slate-700 text-left font-medium">2. 社區防詐御守</button>
+                        <button onclick="loadTemplate(3)" class="p-2 border rounded-lg hover:bg-slate-50 text-slate-700 text-left font-medium">3. 智慧生活小幫手</button>
+                        <button onclick="loadTemplate(4)" class="p-2 border rounded-lg hover:bg-slate-50 text-slate-700 text-left font-medium">4. 世代智慧童玩</button>
+                        <button onclick="loadTemplate(6)" class="p-2 border rounded-lg hover:bg-slate-50 text-slate-700 text-left font-medium">6. 安心出門不求人</button>
+                    </div>
+                </div>
+
+                <!-- 表單區 -->
+                <div class="space-y-4 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">課程主題名稱</label>
+                            <input type="text" id="lp-title" value="安心出門不求人：智慧叫車與個資防禦" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">對象與時間</label>
+                            <input type="text" id="lp-target" value="樂齡學習中心學員與青年學伴 / 50分鐘" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">01. 學習目標 (課後能說、能做、能判斷)</label>
+                        <textarea id="lp-objectives" rows="2" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">1. 能說出使用叫車App時的兩項個資保護做法 (公共地標、去識別化)。
+2. 能親自操作介面並在正式送出前執行「先緩緩」手停核對。
+3. 青銀雙方能完成一次角色輪替與互相核對。</textarea>
+                    </div>
+
+                    <!-- 50分鐘階梯時間配置 -->
+                    <div class="border rounded-2xl p-4 bg-slate-50 space-y-3">
+                        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block">02. 50分鐘階梯教學流程配置</span>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-white p-3 rounded-xl border">
+                                <span class="font-bold text-slate-800">0-5 min 引發需求</span>
+                                <input type="text" id="step-1" value="用長者搭車卡關與地址外洩新聞引起興趣" class="w-full mt-1 p-1.5 border rounded">
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border">
+                                <span class="font-bold text-slate-800">5-10 min 去技術化示範</span>
+                                <input type="text" id="step-2" value="講師展示大字步驟卡，說明「公共地標」概念" class="w-full mt-1 p-1.5 border rounded">
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border">
+                                <span class="font-bold text-slate-800">10-25 min 引導練習</span>
+                                <input type="text" id="step-3" value="長者親自操作語音輸入，青年學伴僅做引導" class="w-full mt-1 p-1.5 border rounded">
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border">
+                                <span class="font-bold text-slate-800">25-40 min 青銀協商共創</span>
+                                <input type="text" id="step-4" value="共同核對優惠與路線，長者確認，夥伴簽名" class="w-full mt-1 p-1.5 border rounded">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">03. 評量證據</label>
+                            <textarea id="lp-assessment" rows="2" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">完成「安心叫車核對卡」簽名、口頭說明公共地標原因。</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">04. 安全備援與教具</label>
+                            <textarea id="lp-safety" rows="2" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none">提供離線紙本卡牌；卡關時使用「先緩緩」四步驟深呼吸停頓。</textarea>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                        <button onclick="exportLessonPlan()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-print"></i>
+                            <span>預覽並列印 PDF 檔</span>
+                        </button>
+                        <button onclick="downloadLessonPlanTxt()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                            <span>下載純文字教案檔 (.txt)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>主辦單位：臺北市政府教育局 ｜ 承辦單位：臺北市代間學習基地（成德國民小學）</p>
+            <p>樂齡韌力模組培力（心理韌力、數位韌力、社會韌力） ｜ GitHub Pages 相容教學模組</p>
+        </div>
+    </footer>
+
+    <!-- 腳本 Javascript -->
+    <script>
+        // Tab 頁籤切換邏輯
+        function switchTab(tabId) {
+            const tabs = ['resilience', 'safety', 'prompt', 'taxi', 'editor'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    if (nav) nav.classList.add('active-tab');
+                } else {
+                    el.classList.add('hidden');
+                    if (nav) nav.classList.remove('active-tab');
+                }
+            });
+        }
+
+        // 樂齡韌力 detail 動態載入（新增圖卡結構說明）
+        const resilienceData = {
+            psych: {
+                title: "心理韌力 (Psychological Resilience)",
+                tagline: "能夠調適：覺察情緒 ｜ 重塑自我效能 ｜ 重新解讀失誤",
+                themeColor: "amber",
+                cards: [
+                    {
+                        step: "01",
+                        title: "停手 (Stop Action)",
+                        icon: "fa-hand-paper",
+                        desc: "遇到介面倒數、點按錯按鈕或卡關時，第一時間放下手指，防止急躁誤觸。"
+                    },
+                    {
+                        step: "02",
+                        title: "辨識焦慮 (Recognize Anxiety)",
+                        icon: "fa-brain",
+                        desc: "覺察胸口緊繃或擔心被催促的心態：「這只是技術挑戰，不代表我學不會。」"
+                    },
+                    {
+                        step: "03",
+                        title: "放慢深呼吸 (Deep Breathe)",
+                        icon: "fa-wind",
+                        desc: "執行 3 秒吸氣、5 秒吐氣，重置生理焦慮反應，恢復情緒穩態。"
+                    },
+                    {
+                        step: "04",
+                        title: "尋求支持 (Ask for Help)",
+                        icon: "fa-user-group",
+                        desc: "向青年學伴或身邊夥伴發出請求：「我想再試一次，你能陪我看這個畫面嗎？」"
+                    }
+                ],
+                phrases: [
+                    "「我理解得對嗎？我們一起看看。」",
+                    "「你想先試手動輸入，還是語音輸入？」",
+                    "「沒關係，按錯可以返回，我們重新練習一項。」"
+                ]
+            },
+            digital: {
+                title: "數位韌力 (Digital Resilience)",
+                tagline: "會做判斷：人機協作 ｜ 辨識幻覺 ｜ 個資最少揭露",
+                themeColor: "blue",
+                cards: [
+                    {
+                        step: "策略 01",
+                        title: "機率預測觀念 (Predictive Tool)",
+                        icon: "fa-microchip",
+                        desc: "去技術化理解：把 AI 當成速度極快的「點子智囊團」，內容為機率計算，非萬能權威。"
+                    },
+                    {
+                        step: "策略 02",
+                        title: "主管責任制 (Human Decision)",
+                        icon: "fa-user-check",
+                        desc: "AI 提供點子草稿，人類擔任「總裁主管」，運用豐富經驗進行審查、改寫與最終決定。"
+                    },
+                    {
+                        step: "策略 03",
+                        title: "雙來源查證 (Double Check)",
+                        icon: "fa-magnifying-glass-chart",
+                        desc: "健康醫療、財務金錢與公務申辦等流暢內容，必須用 2 個獨立官方管道核對。"
+                    },
+                    {
+                        step: "策略 04",
+                        title: "個資防禦 (Privacy Guard)",
+                        icon: "fa-shield-cat",
+                        desc: "使用虛構角色、刪除姓名地址與帳密，遵守個資最少揭露原則。"
+                    }
+                ],
+                phrases: [
+                    "「AI 說得流暢不等於正確，先圈出人名與日期查證。」",
+                    "「輸入前停 3 秒：這個欄位一定要給真實住址嗎？」",
+                    "「把 AI 給的文字改編成你習慣的問候語語氣。」"
+                ]
+            },
+            social: {
+                title: "社會韌力 (Social Resilience)",
+                tagline: "有連結：代間互惠 ｜ 雙向鷹架 ｜ 社區參與",
+                themeColor: "emerald",
+                cards: [
+                    {
+                        step: "機制 01",
+                        title: "青年數位鷹架 (Digital Scaffold)",
+                        icon: "fa-mobile-screen-button",
+                        desc: "青年提供：放大介面字體、引導地標搜尋、說明圖示按鈕，絕不強奪手機直接操作。"
+                    },
+                    {
+                        step: "機制 02",
+                        title: "樂齡經驗鷹架 (Experience Scaffold)",
+                        icon: "fa-award",
+                        desc: "樂齡提供：生命文化脈絡、審核AI回覆是否符合社會倫理與生活實情。"
+                    },
+                    {
+                        step: "機制 03",
+                        title: "角色動態輪替 (Role Rotation)",
+                        icon: "fa-arrows-rotate",
+                        desc: "打破「老永遠是學生，青永遠是老師」的刻板設定，共同解決問題。"
+                    },
+                    {
+                        step: "機制 04",
+                        title: "代間四條件 (Intergen Contact)",
+                        icon: "fa-handshake-angle",
+                        desc: "確保平等地位、共同目標、合作互賴與制度支持，建立持續互信連結。"
+                    }
+                ],
+                phrases: [
+                    "「這次由大哥負責做最後決定，我幫忙導航畫面。」",
+                    "「青銀雙方都有貢獻，且最終操作權保留在長者手中。」",
+                    "「我們一起完成屬於我們小組的共創作品卡。」"
+                ]
+            }
+        };
+
+        function showResilienceDetail(type) {
+            ['psych', 'digital', 'social'].forEach(t => {
+                const card = document.getElementById(`card-${t}`);
+                if (card) {
+                    if (t === type) {
+                        card.classList.add('border-green-500', 'shadow-md');
+                        card.classList.remove('border-slate-200');
+                    } else {
+                        card.classList.remove('border-green-500', 'shadow-md');
+                        card.classList.add('border-slate-200');
+                    }
+                }
+            });
+
+            const data = resilienceData[type];
+            const box = document.getElementById('resilience-detail-box');
+            
+            box.innerHTML = `
+                <div class="animate-fadeIn space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">互動圖卡策略明細</span>
+                            <h3 class="text-2xl font-bold text-slate-800">${data.title}</h3>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full w-fit">${data.tagline}</span>
+                    </div>
+
+                    <!-- 4大關鍵圖卡 Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        ${data.cards.map(c => `
+                            <div class="bg-slate-50 hover:bg-white border border-slate-200 hover:border-green-400 p-5 rounded-2xl transition shadow-sm hover:shadow-md flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-xs font-extrabold text-green-700 bg-green-100 px-2 py-0.5 rounded-md">${c.step}</span>
+                                        <i class="fa-solid ${c.icon} text-lg text-slate-600"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm mb-2">${c.title}</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">${c.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- 支持性語言備忘 -->
+                    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-slate-100 p-5 rounded-2xl">
+                        <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2"><i class="fa-solid fa-comment-dots mr-2"></i>課堂引導與青銀支持性對話示範</h4>
+                        <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            ${data.phrases.map(p => `
+                                <li class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-slate-200 flex items-start space-x-2">
+                                    <i class="fa-solid fa-quote-left text-emerald-400 text-xs mt-0.5"></i>
+                                    <span>${p}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 初始化預設顯示心理韌力
+        showResilienceDetail('psych');
+
+        // 擴充紅黃綠燈測驗資料 (6 題多元情境)
+        let quizScore = 0;
+        const quizItems = [
+            {
+                id: 1,
+                q: "1. 想要寫一段祝賀孫女大學畢業的溫馨祝福簡訊，希望能有多種語氣風格供參考選擇。",
+                options: [
+                    { label: "綠燈｜可以直接使用 AI 生成草稿並修飾語氣", color: "green", correct: true },
+                    { label: "黃燈｜需查找政府公報備查方可發送", color: "amber", correct: false },
+                    { label: "紅燈｜涉及個資與情感，嚴禁使用 AI 創作", color: "red", correct: false }
+                ],
+                explain: "解析：節慶賀卡與祝詞屬於低風險、易修改的創作任務，適合讓 AI 提供草稿點子，再由長者親自調整為自己的親切語氣。"
+            },
+            {
+                q: "2. 收到 LINE 群組傳來「某牌保健食品能完全治癒慢性高血壓，且建議即刻停用西藥」的說明影片。",
+                options: [
+                    { label: "綠燈｜讓 AI 整理摘要後直接依步驟停藥", color: "green", correct: false },
+                    { label: "黃燈｜用 AI 去網路搜尋並自行判斷", color: "amber", correct: false },
+                    { label: "紅燈｜涉及醫療診斷與停藥決策，禁止交付 AI，應停止自行採用並轉向合格醫師", color: "red", correct: true }
+                ],
+                explain: "解析：醫療診斷與停藥決策屬於高風險且不可逆的行為，絕不能直接採信網路影片或 AI 生成內容，必須尋求合格專業人員診斷。"
+            },
+            {
+                q: "3. 查詢今年臺北市敬老愛心卡搭乘計程車的點數折抵金額與適用店家規定。",
+                options: [
+                    { label: "綠燈｜AI 給出的金額絕對精確，不需核對", color: "green", correct: false },
+                    { label: "黃燈｜將 AI 答案視為初稿，需透過獨立官方管道（社會局官網/1999）雙來源查證", color: "amber", correct: true },
+                    { label: "紅燈｜只要涉及敬老卡就完全不能使用數位搜尋", color: "red", correct: false }
+                ],
+                explain: "解析：公眾福利法規與補助金額具有時效性與特定條件，AI 容易產生資訊幻覺，故屬黃燈，必須尋找獨立官方來源核對。"
+            },
+            {
+                q: "4. 想帶孫子去木柵動物園玩，希望整理一份包含搭乘公車路線與午後遮蔭休息點的一日遊規劃。",
+                options: [
+                    { label: "綠燈｜AI 擔任點子智囊團提出候選行程，人類進行審核與調整", color: "green", correct: true },
+                    { label: "黃燈｜此為高危險行程，必須呈報主管機關", color: "amber", correct: false },
+                    { label: "紅燈｜禁止使用 AI 搜尋任何旅遊資訊", color: "red", correct: false }
+                ],
+                explain: "解析：旅遊行程點子屬於低風險可調整事項，由 AI 提草稿、長者根據體力與偏好做最後決定，是完美的人機協作模範。"
+            },
+            {
+                q: "5. 接到自稱地檢署的電話，要求將銀行帳號密碼與身分證字號輸入至某個審查網站進行資產驗證。",
+                options: [
+                    { label: "綠燈｜請 AI 自動填寫密碼驗證", color: "green", correct: false },
+                    { label: "黃燈｜用 AI 檢查網站介面美觀程度", color: "amber", correct: false },
+                    { label: "紅燈｜絕對禁止輸入帳密個資！直接掛斷並撥打 165 反詐騙專線", color: "red", correct: true }
+                ],
+                explain: "解析：帳號密碼與身分證屬於紅燈核心防禦層！公家機關絕不會要求線上提供密碼，應即刻停止並尋求反詐專線查證。"
+            },
+            {
+                q: "6. 在代間共學課堂上，想拍攝食材包裝上的營養標示並讓 AI 協助文字辨識與放大閱讀。",
+                options: [
+                    { label: "綠燈｜只拍攝去識別化的包裝標示，避開人臉與個資，放心輔助辨識", color: "green", correct: true },
+                    { label: "黃燈｜必須把全家人身分證一起拍進去", color: "amber", correct: false },
+                    { label: "紅燈｜拍照功能絕對禁止在教學現場使用", color: "red", correct: false }
+                ],
+                explain: "解析：使用去識別化的公開食品標籤屬於綠燈安全用法，只需遵守四角掃描避開人臉與信件門牌即可。"
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = quizItems.map((item, idx) => `
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-slate-500 bg-slate-200 px-2.5 py-0.5 rounded-full">情境 ${idx + 1} / ${quizItems.length}</span>
+                        <span id="quiz-status-${idx}" class="text-xs font-bold text-slate-400">尚未回答</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800 mb-4 leading-relaxed">${item.q}</p>
+                    <div class="space-y-2.5">
+                        ${item.options.map((opt, oIdx) => `
+                            <button onclick="checkAnswer(${idx}, ${oIdx})" id="btn-${idx}-${oIdx}" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-100 transition flex items-center justify-between group">
+                                <span>${opt.label}</span>
+                                <i class="fa-solid fa-circle-chevron-right text-slate-300 group-hover:text-slate-500"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="quiz-result-${idx}" class="hidden mt-4 p-4 text-xs rounded-xl transition"></div>
+                </div>
+            `).join('');
+        }
+        renderQuiz();
+
+        function checkAnswer(qIdx, oIdx) {
+            const item = quizItems[qIdx];
+            const selectedOpt = item.options[oIdx];
+            const isCorrect = selectedOpt.correct;
+            
+            // 禁用該題按鈕
+            item.options.forEach((_, optIndex) => {
+                const btn = document.getElementById(`btn-${qIdx}-${optIndex}`);
+                if (btn) btn.disabled = true;
+            });
+
+            const statusEl = document.getElementById(`quiz-status-${qIdx}`);
+            const resBox = document.getElementById(`quiz-result-${qIdx}`);
+            resBox.classList.remove('hidden', 'bg-green-100', 'text-green-900', 'bg-red-100', 'text-red-900', 'border', 'border-green-300', 'border-red-300');
+            
+            if (isCorrect) {
+                quizScore += 100;
+                statusEl.innerHTML = `<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle"></i> 回答正確 (+100)</span>`;
+                resBox.classList.add('bg-green-50', 'text-green-900', 'border', 'border-green-200');
+                resBox.innerHTML = `<div class="font-bold text-sm text-green-800 mb-1"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> 判斷正確！</div><div>${item.explain}</div>`;
+            } else {
+                statusEl.innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-circle-xmark"></i> 判斷錯誤</span>`;
+                resBox.classList.add('bg-red-50', 'text-red-900', 'border', 'border-red-200');
+                resBox.innerHTML = `<div class="font-bold text-sm text-red-800 mb-1"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-1"></i> 風險評估有偏差！</div><div>${item.explain}</div>`;
+            }
+
+            document.getElementById('quiz-score').innerText = `${quizScore} / 600`;
+        }
+
+        function resetQuiz() {
+            quizScore = 0;
+            document.getElementById('quiz-score').innerText = `0 / 600`;
+            renderQuiz();
+        }
+
+        // Generate 5-格 Prompt
+        function generatePrompt() {
+            const goal = document.getElementById('p-goal').value || "未填寫目標";
+            const context = document.getElementById('p-context').value || "未填寫背景";
+            const constraint = document.getElementById('p-constraint').value || "未填寫限制";
+            const output = document.getElementById('p-output').value || "請條列說明";
+            const safety = document.getElementById('p-safety').value;
+
+            const res = `【高齡友善 5格提問指令】\n1. 目標：${goal}\n2. 背景：${context}\n3. 限制：${constraint}\n4. 輸出：${output}\n5. 安全界線：${safety}`;
+            document.getElementById('prompt-output-box').innerText = res;
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('prompt-output-box').innerText;
+            navigator.clipboard.writeText(text);
+            alert("已複製提示詞至剪貼簿！");
+        }
+
+        // 叫車模擬
+        let selectedDest = "";
+        function selectTaxiDestination(dest) {
+            selectedDest = dest;
+            document.getElementById('summary-dest').innerText = dest;
+            document.getElementById('taxi-step-2').classList.remove('opacity-60');
+            document.getElementById('taxi-step-3').classList.remove('opacity-60');
+        }
+
+        function triggerPauseMechanism() {
+            if(!selectedDest) {
+                alert("請先在 STEP 1 點選一個公共地標目的地！");
+                return;
+            }
+            document.getElementById('pause-modal').classList.remove('hidden');
+        }
+
+        // 教案範本
+        const templates = {
+            1: { title: "家庭回憶錄：青銀共創數位相簿", target: "樂齡中心學員 / 50分鐘" },
+            2: { title: "社區防詐御守：雙來源查證實作", target: "樂齡中心學員與青年志工 / 50分鐘" },
+            3: { title: "智慧生活小幫手：生成式AI協作入門", target: "種子師資培訓 / 50分鐘" },
+            4: { title: "世代智慧童玩：傳統智慧與數位體驗", target: "代間共學班 / 50分鐘" },
+            6: { title: "安心出門不求人：智慧叫車與個資防禦", target: "樂齡中心學員與青年學伴 / 50分鐘" }
+        };
+
+        function loadTemplate(id) {
+            const t = templates[id];
+            if(t) {
+                document.getElementById('lp-title').value = t.title;
+                document.getElementById('lp-target').value = t.target;
+            }
+        }
+
+        // 導出一頁式教案 (直接觸發乾淨的獨立視窗或 Print PDF)
+        function exportLessonPlan() {
+            const title = document.getElementById('lp-title').value || "樂齡韌力教案";
+            const target = document.getElementById('lp-target').value || "";
+            const objectives = document.getElementById('lp-objectives').value || "";
+            const s1 = document.getElementById('step-1').value || "";
+            const s2 = document.getElementById('step-2').value || "";
+            const s3 = document.getElementById('step-3').value || "";
+            const s4 = document.getElementById('step-4').value || "";
+            const assessment = document.getElementById('lp-assessment').value || "";
+            const safety = document.getElementById('lp-safety').value || "";
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="zh-TW">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${title} - 一頁式教案</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <style>
+                        @media print {
+                            body { -webkit-print-color-adjust: exact; }
+                        }
+                    </style>
+                </head>
+                <body class="bg-white p-8 font-sans text-slate-800 max-w-4xl mx-auto">
+                    <div class="border-2 border-emerald-600 p-6 rounded-2xl space-y-6">
+                        <div class="border-b-2 border-emerald-600 pb-4 flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-emerald-800">${title}</h1>
+                                <p class="text-xs text-slate-500 mt-1">臺北市代間學習基地 ｜ 樂齡韌力模組一頁式教案</p>
+                            </div>
+                            <div class="text-right text-xs font-semibold text-slate-600">
+                                <div>對象與時間：${target}</div>
+                                <div>產出日期：${new Date().toLocaleDateString('zh-TW')}</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-sm font-bold text-emerald-700 uppercase tracking-wider">01. 學習目標 (Objectives)</h2>
+                            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 text-xs whitespace-pre-wrap leading-relaxed">${objectives}</div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-sm font-bold text-emerald-700 uppercase tracking-wider">02. 50分鐘階梯教學流程配置</h2>
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="border p-3 rounded-xl bg-slate-50">
+                                    <span class="font-bold text-slate-800 block mb-1">0-5 min 引發需求</span>
+                                    <span>${s1}</span>
+                                </div>
+                                <div class="border p-3 rounded-xl bg-slate-50">
+                                    <span class="font-bold text-slate-800 block mb-1">5-10 min 去技術化示範</span>
+                                    <span>${s2}</span>
+                                </div>
+                                <div class="border p-3 rounded-xl bg-slate-50">
+                                    <span class="font-bold text-slate-800 block mb-1">10-25 min 引導練習</span>
+                                    <span>${s3}</span>
+                                </div>
+                                <div class="border p-3 rounded-xl bg-slate-50">
+                                    <span class="font-bold text-slate-800 block mb-1">25-40 min 青銀共創與教回</span>
+                                    <span>${s4}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div class="space-y-1">
+                                <h2 class="font-bold text-emerald-700">03. 評量證據 (Assessment)</h2>
+                                <div class="border p-3 rounded-xl bg-slate-50 min-h-[60px] whitespace-pre-wrap">${assessment}</div>
+                            </div>
+                            <div class="space-y-1">
+                                <h2 class="font-bold text-emerald-700">04. 安全備援與教具 (Safety & Tools)</h2>
+                                <div class="border p-3 rounded-xl bg-slate-50 min-h-[60px] whitespace-pre-wrap">${safety}</div>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4 text-center text-xs text-slate-400">
+                            臺北市政府教育局 主辦 ｜ 臺北市代間學習基地 (成德國民小學) 承辦
+                        </div>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() { window.print(); }, 500);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // 下載 txt 教案檔案備援
+        function downloadLessonPlanTxt() {
+            const title = document.getElementById('lp-title').value || "樂齡韌力教案";
+            const target = document.getElementById('lp-target').value || "";
+            const objectives = document.getElementById('lp-objectives').value || "";
+            const s1 = document.getElementById('step-1').value || "";
+            const s2 = document.getElementById('step-2').value || "";
+            const s3 = document.getElementById('step-3').value || "";
+            const s4 = document.getElementById('step-4').value || "";
+            const assessment = document.getElementById('lp-assessment').value || "";
+            const safety = document.getElementById('lp-safety').value || "";
+
+            const content = `【臺北市代間學習基地 - 樂齡韌力模組一頁式教案】\n
+主題：${title}
+對象與時間：${target}
+產出日期：${new Date().toLocaleDateString('zh-TW')}
+
+========================================
+01. 學習目標：
+${objectives}
+
+========================================
+02. 50分鐘階梯教學流程：
+- 0-5 min 引發需求：${s1}
+- 5-10 min 去技術化示範：${s2}
+- 10-25 min 引導練習：${s3}
+- 25-40 min 青銀共創：${s4}
+
+========================================
+03. 評量證據：
+${assessment}
+
+========================================
+04. 安全備援與教具：
+${safety}
+`;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${title}_教案.txt`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+    </script>
+</body>
+</html>
